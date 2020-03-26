@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+    Tabular coding response:
+    <br>
+    <textarea rows="30" cols="80" id="inputjson">
+            {
+            "headers": [
+                "lineId",
+                "quantity",
+                "amount",
+                "sandboxproject"
+              
+            ],
+            "rows": [
+                [
+                    null,
+                    "3",
+                    "50",
+                    "4"
+                ],
+                        [
+                    "1",
+                    "1",
+                    "1000",
+                    "1"
+                ],
+                        [
+                    "2",
+                    "2",
+                    "400",
+                    "4"
+                ]
+            ]
+        }
+    </textarea>
+
+    <p>Convert Tabular coding response to CSV</p>
+
+    <button type="button" onclick="download()">Convert</button>
+
+    <script>
+        function convertToCSV(input) {
+            console.log(input)
+            headers = input.headers
+            data = input.rows
+            data.unshift(headers)
+            return data.map(items => items.join(',')).join('\r\n')
+        }
+
+        function exportCSVFile(input, fileTitle) {
+
+            var jsonObject = JSON.parse(input);
+
+            var csv = this.convertToCSV(jsonObject);
+
+            var exportedFilenmae = fileTitle + '.csv' || 'export.csv';
+
+            var blob = new Blob([csv], {
+                type: 'text/csv;charset=utf-8;'
+            });
+            if (navigator.msSaveBlob) { // IE 10+
+                navigator.msSaveBlob(blob, exportedFilenmae);
+            } else {
+                var link = document.createElement("a");
+                if (link.download !== undefined) { // feature detection
+                    // Browsers that support HTML5 download attribute
+                    var url = URL.createObjectURL(blob);
+                    link.setAttribute("href", url);
+                    link.setAttribute("download", exportedFilenmae);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            }
+        }
+
+        function download() {
+
+            var input = document.getElementById("inputjson").value
+
+            var fileTitle = 'coding';
+
+            exportCSVFile(input, fileTitle);
+        }
+    </script>
+
+</body>
+
+</html>
